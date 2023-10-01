@@ -42,9 +42,15 @@ public class VisionCenterstage extends OpenCvPipeline {
     @Override
     public Mat processFrame(Mat input) {
         Imgproc.cvtColor(input, mat, Imgproc.COLOR_RGB2HSV);
-        Scalar lowHSV = new Scalar(23, 50, 70);
-        Scalar highHSV = new Scalar(32, 255, 255);
 
+        //blue low: 100,70,100
+        //yellow low: 23, 50, 70
+        Scalar lowHSV = new Scalar(0,90,140);
+        //100,90,50
+        //blue high: 150,255,255
+        //yellow high: 32, 255, 255
+        Scalar highHSV = new Scalar(50,255,255);
+//(170,255,255)
         Core.inRange(mat, lowHSV, highHSV, mat);
 
         Mat left = mat.submat(LEFT_ROI);
