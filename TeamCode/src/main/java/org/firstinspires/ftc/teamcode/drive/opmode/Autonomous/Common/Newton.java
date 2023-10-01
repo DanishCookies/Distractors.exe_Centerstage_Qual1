@@ -13,6 +13,8 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
+import org.firstinspires.ftc.teamcode.drive.opmode.Autonomous.Common.VisionBlue;
+import org.firstinspires.ftc.teamcode.drive.opmode.Autonomous.Common.VisionRed;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
@@ -21,7 +23,8 @@ import org.openftc.easyopencv.OpenCvWebcam;
 public class Newton {
     public OpenCvWebcam Webcam1;
 
-    org.firstinspires.ftc.teamcode.drive.opmode.Autonomous.Common.VisionCenterstage leftdetector;
+    VisionRed Red;
+    VisionBlue Blue;
 
     public void initialize(HardwareMap myHardwareMap, Telemetry telemetry, String position) {
 
@@ -35,19 +38,28 @@ public class Newton {
 
         Webcam1 = OpenCvCameraFactory.getInstance().createWebcam(myHardwareMap.get(WebcamName.class, "Webcam1"), cameraMonitorViewId);
 
+        if (position.equals("Blue") || position.equals("blue"))
+        {
+            Blue = new VisionBlue(telemetry);
+            Webcam1.setPipeline(Blue);
+        }
+        else if (position.equals("Red") || position.equals("red"))
+        {
+            Red = new VisionRed(telemetry);
+            Webcam1.setPipeline(Red);
+        }
 
-        leftdetector = new org.firstinspires.ftc.teamcode.drive.opmode.Autonomous.Common.VisionCenterstage(telemetry);
-        Webcam1.setPipeline(leftdetector);
-
-
-        Webcam1.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
+        Webcam1.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener()
+        {
             @Override
-            public void onOpened() {
+            public void onOpened()
+            {
                 Webcam1.startStreaming(320, 240, OpenCvCameraRotation.UPRIGHT);
             }
 
             @Override
-            public void onError(int errorCode) {
+            public void onError(int errorCode)
+            {
 
             }
         });
@@ -59,7 +71,23 @@ public class Newton {
         String pos;
         pos = "";
         if (robotpos.equals("Left")) {
-            switch (leftdetector.getLocation()) {
+            switch (Blue.getLocation()) {
+                case LEFT:
+                    pos = "L";
+                    Webcam1.stopStreaming();
+                    break;
+                case MIDDLE:
+                    pos = "M";
+                    Webcam1.stopStreaming();
+                    break;
+                case RIGHT:
+                    pos = "R";
+                    Webcam1.stopStreaming();
+                    break;
+            }
+        } else
+        {
+            switch (Red.getLocation()) {
                 case LEFT:
                     pos = "L";
                     Webcam1.stopStreaming();
@@ -76,10 +104,8 @@ public class Newton {
         }
         return pos;
     }
+
+
+
+
 }
-
-
-
-
-
-

@@ -9,7 +9,7 @@ import org.opencv.core.Scalar;
 import org.opencv.imgproc.Imgproc;
 import org.openftc.easyopencv.OpenCvPipeline;
 
-public class VisionCenterstage extends OpenCvPipeline {
+public class VisionRed extends OpenCvPipeline {
     Telemetry telemetry;
     Mat mat = new Mat();
     public enum Location {
@@ -37,20 +37,14 @@ public class VisionCenterstage extends OpenCvPipeline {
             new Point(115, 30));
     static double PERCENT_COLOR_THRESHOLD = 0.05;
 
-    public VisionCenterstage(Telemetry t) { telemetry = t; }
+    public VisionRed(Telemetry t) { telemetry = t; }
 
     @Override
     public Mat processFrame(Mat input) {
         Imgproc.cvtColor(input, mat, Imgproc.COLOR_RGB2HSV);
-
-        //blue low: 100,70,100
-        //yellow low: 23, 50, 70
         Scalar lowHSV = new Scalar(0,90,140);
-        //100,90,50
-        //blue high: 150,255,255
-        //yellow high: 32, 255, 255
         Scalar highHSV = new Scalar(50,255,255);
-//(170,255,255)
+
         Core.inRange(mat, lowHSV, highHSV, mat);
 
         Mat left = mat.submat(LEFT_ROI);
